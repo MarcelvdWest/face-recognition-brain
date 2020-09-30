@@ -1,6 +1,5 @@
 {
   "name": "face-recognition-brain",
-  "homepage": "http://MarcelvdWest.github.io/face-recognition-brain",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
