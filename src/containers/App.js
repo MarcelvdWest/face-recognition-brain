@@ -25,8 +25,6 @@ const particleOptions = {
 const initialState = {
   input: '',
   imageUrl: '',
-  resp: {},
-  respCheck: false,
   error: [
     {
       message: '',
@@ -53,9 +51,9 @@ class App extends Component {
     this.state = initialState;
   }
 
-  calculateFaceLocation = (data, i) => {
+  calculateFaceLocation = (data) => {
     console.log('test')
-    const clarifaiFace = data.outputs[0].data.regions[i].region_info.bounding_box;
+    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
     const image = document.getElementById('inputImage');
     const width = Number(image.width);
     const height = Number(image.height);
@@ -86,8 +84,8 @@ class App extends Component {
       })   
     }).then(response => response.json())
       .then(response => {
-        this.setState({ resp: response , respCheck: true })
-        console.log(this.state.resp)
+        resp = response
+        console.log(resp)
         if(response !== "Unable To Work With API"){
           fetch('http://localhost:3100/image', {
             method: 'put',
@@ -101,18 +99,14 @@ class App extends Component {
             this.setState(Object.assign(this.state.user, { entries: count }))
           }).catch(err => this.setState({ error: {
             message: resp ,
-            validation: true,
-            respCheck: false
+            validation: true
           }}))
-        }else{
-          this.setState({ respCheck: false })
         }
-        //this.displayFaceBox(this.calculateFaceLocation(response, 0))
+        this.displayFaceBox(this.calculateFaceLocation(response))
       })
       .catch(err => this.setState({ error: {
         message: resp ,
-        validation: true,
-        respCheck: false,
+        validation: true
       }}))
   }
 
@@ -150,7 +144,7 @@ class App extends Component {
   }
 
   render(){
-    const { box, imageUrl, isSignedIn, route , error, resp, respCheck } = this.state
+    const { box, imageUrl, isSignedIn, route , error, resp } = this.state
     return (
       <div className="App">
         <Particles className='particles'
@@ -191,12 +185,8 @@ class App extends Component {
                                 onButtonSubmit={this.onButtonSubmit}
                               />
                               <FaceRecognition 
-                                resp={resp} 
                                 imageUrl={imageUrl} 
                                 box={box} 
-                                displayFaceBox={this.displayFaceBox} 
-                                calculateFaceLocation={this.calculateFaceLocation}
-                                respCheck={respCheck}
                               />
                             </div>
                           )  
@@ -212,12 +202,8 @@ class App extends Component {
                         onButtonSubmit={this.onButtonSubmit}
                       />
                       <FaceRecognition 
-                        resp={resp} 
                         imageUrl={imageUrl} 
                         box={box} 
-                        displayFaceBox={this.displayFaceBox} 
-                        calculateFaceLocation={this.calculateFaceLocation}
-                        respCheck={respCheck}
                       />
                     </div>
 
