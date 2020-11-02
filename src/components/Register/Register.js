@@ -1,5 +1,7 @@
 import React from 'react';
 
+let resp = '';
+
 class Register extends React.Component{
     constructor(props){
         super(props);
@@ -23,7 +25,7 @@ class Register extends React.Component{
     }
     
     onRegister = () => {
-        fetch('https://afternoon-fortress-33562.herokuapp.com/register', {
+        fetch('http://localhost:3100/register', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -34,11 +36,21 @@ class Register extends React.Component{
         })
         .then(response => response.json())
         .then(user => {
+            resp = user
+            if(user === 'Unable To Register, Email Already In Use' || user === 'Incorrect Form Submission'){
+                this.props.setErrorTrue(resp)
+            }
             if(user.id){
-                this.props.loadUser(user);
-                this.props.onRouteChange('home');   
+                this.props.loadUser(user)
+                this.props.onRouteChange('home')
             }
         })
+    }
+
+    handleEnter = (event) => {
+        if(event.key === 'Enter'){
+            this.onRegister()
+        }
     }
     
     render(){
@@ -56,6 +68,7 @@ class Register extends React.Component{
                                 name="name"  
                                 id="name"
                                 onChange={this.onNameChange}
+                                onKeyPress={this.handleEnter}
                             />
                         </div>
                         <div className="mt3">
@@ -66,6 +79,7 @@ class Register extends React.Component{
                                 name="email-address"  
                                 id="email-address"
                                 onChange={this.onEmailChange}
+                                onKeyPress={this.handleEnter}
                             />
                         </div>
                         <div className="mv3">
@@ -76,10 +90,11 @@ class Register extends React.Component{
                                 name="password"  
                                 id="password"
                                 onChange={this.onPasswordChange}
+                                onKeyPress={this.handleEnter}
                             />
                         </div>
                     </fieldset>
-                    <div className="">
+                    <div>
                         <input
                             onClick={this.onRegister}  
                             className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" 
